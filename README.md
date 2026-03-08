@@ -10,8 +10,8 @@ Starting from complete zero AI knowledge,
 I built a production-grade DevOps AI Copilot
 deployed on AWS cloud in under 2 weeks.
 
-**Live API:**
-POST https://2cqc53tued.execute-api.eu-west-2.amazonaws.com/ask
+**Live :**
+http://dibs-copilot-ui.s3-website.eu-west-2.amazonaws.com
 
 ---
 
