@@ -1,0 +1,14 @@
+.env
+*.env
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+.DS_Store
+*.zip
+copilot_deploy/
+lambda_package/
+dibs_knowledge/
+dibs_langchain_db/
+copilot_knowledge/
+chat_memory.json

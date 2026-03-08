@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DevOps AI Copilot</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1a1d27;
+      border: 1px solid #2a2d3e;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 680px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #232634;
+      border: 1px solid #3a3d52;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      color: #7c83b0;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    textarea {
+      flex: 1;
+      background: #0f1117;
+      border: 1px solid #2a2d3e;
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #e0e0e0;
+      font-size: 15px;
+      font-family: inherit;
+      resize: none;
+      height: 56px;
+      line-height: 1.5;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      border-color: #5b6af0;
+    }
+
+    textarea::placeholder {
+      color: #4a4f6a;
+    }
+
+    button {
+      background: #5b6af0;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0 22px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    button:hover { background: #4a58e0; }
+    button:active { transform: scale(0.97); }
+    button:disabled { background: #3a3d52; cursor: not-allowed; }
+
+    .answer-box {
+      background: #0f1117;
+      border: 1px solid #2a2d3e;
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 100px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #c9d1d9;
+      display: none;
+    }
+
+    .answer-box.visible { display: block; }
+
+    .answer-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #5b6af0;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 8px; height: 8px;
+      background: #5b6af0;
+      border-radius: 50%;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .error { color: #f87171; }
+
+    .ans-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .ans-num {
+      color: #5b6af0;
+      font-weight: 700;
+      min-width: 22px;
+      font-size: 15px;
+    }
+
+    .answer-box p {
+      margin-bottom: 10px;
+      line-height: 1.7;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: #3a3d52;
+    }
+
+    .tip {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #4a4f6a;
+      text-align: center;
+    }
+
+    .tip span {
+      background: #232634;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #7c83b0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="header">
+      <div class="badge">Powered by AWS Bedrock + Claude</div>
+      <h1>DevOps AI Copilot</h1>
+      <p class="subtitle">Ask anything about DIBS infrastructure & architecture</p>
+    </div>
+
+    <div class="input-group">
+      <textarea id="question" placeholder="What AWS services does DIBS use?" rows="1"></textarea>
+      <button id="askBtn" onclick="askQuestion()">Ask</button>
+    </div>
+
+    <div class="answer-box" id="answerBox">
+      <div class="answer-label">Answer</div>
+      <div id="answerContent"></div>
+    </div>
+
+    <p class="tip">Try: <span>What is the DIBS deployment process?</span></p>
+  </div>
+
+  <div class="footer">Built by Sourav Mohanty &nbsp;·&nbsp; AWS Lambda + Pinecone + Claude</div>
+
+  <script>
+    const API = "https://2cqc53tued.execute-api.eu-west-2.amazonaws.com/ask";
+
+    // Allow Enter key to submit (Shift+Enter for new line)
+    document.getElementById("question").addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        askQuestion();
+      }
+    });
+
+    function formatAnswer(text) {
+      // Split into lines and detect numbered list items
+      const lines = text.split(/(?=\d+\.\s)/);
+      if (lines.length > 1) {
+        // Numbered list format
+        const items = lines.map(line => {
+          line = line.trim();
+          if (!line) return '';
+          const match = line.match(/^(\d+)\.\s+(.*)/s);
+          if (match) {
+            return `<div class="ans-item"><span class="ans-num">${match[1]}.</span><span>${match[2].replace(/\n/g, ' ')}</span></div>`;
+          }
+          return `<p>${line}</p>`;
+        }).filter(Boolean);
+        return items.join('');
+      }
+      // Plain paragraph — split on double newlines
+      return text.split('\n').filter(l => l.trim()).map(l => `<p>${l}</p>`).join('');
+    }
+
+    async function askQuestion() {
+      const questionEl = document.getElementById("question");
+      const answerBox  = document.getElementById("answerBox");
+      const answerContent = document.getElementById("answerContent");
+      const btn = document.getElementById("askBtn");
+
+      const question = questionEl.value.trim();
+      if (!question) return;
+
+      // Show loading
+      btn.disabled = true;
+      btn.textContent = "...";
+      answerBox.classList.add("visible");
+      answerContent.innerHTML = `
+        <div class="loading">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <span>Thinking...</span>
+        </div>`;
+
+      try {
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+
+        if (data.answer) {
+          answerContent.innerHTML = formatAnswer(data.answer);
+        } else if (data.error) {
+          answerContent.innerHTML = `<span class="error">Error: ${data.error}</span>`;
+        } else {
+          answerContent.innerHTML = `<span class="error">No answer returned.</span>`;
+        }
+
+      } catch (err) {
+        answerContent.innerHTML = `<span class="error">Could not reach API. Check CORS settings in API Gateway.</span>`;
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Ask";
+    }
+  </script>
+
+</body>
+</html>
